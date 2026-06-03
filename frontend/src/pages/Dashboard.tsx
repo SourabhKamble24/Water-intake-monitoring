@@ -4,8 +4,16 @@ import { useAuth } from '../context/AuthContext';
 import ProgressIndicator from '../components/Dashboard/ProgressIndicator';
 import QuickAdd from '../components/Dashboard/QuickAdd';
 import Gamification from '../components/Dashboard/Gamification';
+import VirtualPlant from '../components/Dashboard/VirtualPlant';
 import { CloudRain, ThermometerSun, Zap, Clock, TrendingUp, Droplets, MapPin, Cloud, Activity, Smartphone, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good Morning';
+  if (hour < 18) return 'Good Afternoon';
+  return 'Good Evening';
+};
 
 const Dashboard = () => {
   const { user, token, updateUser } = useAuth();
@@ -137,11 +145,11 @@ const Dashboard = () => {
         });
         
         if (res.data.leveledUp) {
-          alert(`Congratulations! You leveled up to Level ${res.data.newLevel}!`);
+          console.log(`Congratulations! You leveled up to Level ${res.data.newLevel}!`);
         }
         
         if (res.data.newAchievements && res.data.newAchievements.length > 0) {
-          alert(`You earned a new badge: ${res.data.newAchievements[0].title}!`);
+          console.log(`You earned a new badge: ${res.data.newAchievements[0].title}!`);
         }
       }
       
@@ -182,7 +190,7 @@ const Dashboard = () => {
         className="flex flex-col md:flex-row md:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 tracking-tight">Good Morning, {user?.name?.split(' ')[0] || 'User'} 👋</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 tracking-tight">{getGreeting()}, {user?.name?.split(' ')[0] || 'User'} 👋</h1>
           <p className="text-text-secondary text-lg">Let's reach your hydration goal today.</p>
         </div>
         <div className="glass-panel px-4 py-2 flex items-center space-x-3">
@@ -196,70 +204,75 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Column */}
-        <div className="lg:col-span-2 space-y-8">
-          
-          {/* Main Progress Section */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-            className="glass-panel p-8 flex flex-col relative overflow-hidden"
-          >
-            {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-            
-            <div className="flex justify-between items-start mb-8 relative z-10">
-              <div>
-                <h2 className="text-xl font-bold">Daily Progress</h2>
-                <p className="text-text-secondary text-sm mt-1">Based on your personal settings</p>
+      <div className="space-y-8">
+        {/* Top Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            {/* Main Progress Section */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className="glass-panel p-8 flex flex-col relative overflow-hidden"
+            >
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+              
+              <div className="flex justify-between items-start mb-8 relative z-10">
+                <div>
+                  <h2 className="text-xl font-bold">Daily Progress</h2>
+                  <p className="text-text-secondary text-sm mt-1">Based on your personal settings</p>
+                </div>
               </div>
-            </div>
-            
-            <ProgressIndicator currentIntake={currentIntake} dailyGoal={adjustedGoal} />
-          </motion.div>
+              
+              <ProgressIndicator currentIntake={currentIntake} dailyGoal={adjustedGoal} />
+            </motion.div>
 
-          {/* Quick Add Section */}
+            {/* Quick Add Section */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="glass-panel p-8"
+            >
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div>
+                  <h2 className="text-xl font-bold">Log Intake</h2>
+                  <p className="text-text-secondary text-sm mt-1">Quickly add to your daily total</p>
+                </div>
+                
+                <form onSubmit={handleCustomAdd} className="flex space-x-2 w-full sm:w-auto">
+                  <input 
+                    type="number" 
+                    min="1"
+                    placeholder="Custom (ml)" 
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    className="input-field w-full sm:w-32 h-11 bg-surface-hover border-transparent"
+                  />
+                  <button type="submit" disabled={addLoading || !customAmount} className="btn-primary h-11 px-6 whitespace-nowrap">
+                    Add
+                  </button>
+                </form>
+              </div>
+              <QuickAdd onAdd={handleAddWater} isLoading={addLoading} />
+            </motion.div>
+          </div>
+
+          <div className="space-y-8">
+            {/* Virtual Plant Companion */}
+            <VirtualPlant percentage={percentage} />
+          </div>
+        </div>
+
+        {/* Middle Section: Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Weather Impact Card */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="glass-panel p-8"
-          >
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-              <div>
-                <h2 className="text-xl font-bold">Log Intake</h2>
-                <p className="text-text-secondary text-sm mt-1">Quickly add to your daily total</p>
-              </div>
-              
-              <form onSubmit={handleCustomAdd} className="flex space-x-2 w-full sm:w-auto">
-                <input 
-                  type="number" 
-                  min="1"
-                  placeholder="Custom (ml)" 
-                  value={customAmount}
-                  onChange={(e) => setCustomAmount(e.target.value)}
-                  className="input-field w-full sm:w-32 h-11 bg-surface-hover border-transparent"
-                />
-                <button type="submit" disabled={addLoading || !customAmount} className="btn-primary h-11 px-6 whitespace-nowrap">
-                  Add
-                </button>
-              </form>
-            </div>
-            <QuickAdd onAdd={handleAddWater} isLoading={addLoading} />
-          </motion.div>
-        </div>
-
-        {/* Sidebar Column */}
-        <div className="space-y-8">
-          
-          {/* Weather Impact Card */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.25 }}
-            className="glass-panel p-6 bg-gradient-to-br from-blue-500/10 to-blue-400/5 relative overflow-hidden border-blue-500/20"
+            className="glass-panel p-6 bg-gradient-to-br from-blue-500/10 to-blue-400/5 relative overflow-hidden border-blue-500/20 h-full"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <Cloud size={64} className="text-blue-500" />
@@ -302,10 +315,10 @@ const Dashboard = () => {
           
           {/* Activity Integration Card */}
           <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="glass-panel p-6 bg-gradient-to-br from-green-500/10 to-green-400/5 relative overflow-hidden border-green-500/20"
+            className="glass-panel p-6 bg-gradient-to-br from-green-500/10 to-green-400/5 relative overflow-hidden border-green-500/20 h-full"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <Activity size={64} className="text-green-500" />
@@ -367,10 +380,10 @@ const Dashboard = () => {
           
           {/* AI Insights Card */}
           <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="glass-panel p-6 bg-gradient-to-br from-surface to-surface-hover relative overflow-hidden border-primary/20"
+            className="glass-panel p-6 bg-gradient-to-br from-surface to-surface-hover relative overflow-hidden border-primary/20 h-full"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <Zap size={64} />
@@ -405,13 +418,16 @@ const Dashboard = () => {
               )}
             </div>
           </motion.div>
+        </div>
 
+        {/* Bottom Section: Logs and Gamification */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Activity Timeline */}
           <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="glass-panel p-6"
+            className="glass-panel p-6 h-full"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold flex items-center space-x-2">
@@ -420,28 +436,30 @@ const Dashboard = () => {
               </h2>
             </div>
             
-            <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
+            <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar items-center">
               
               {/* Real Timeline Items */}
               {todayLogs.map((log, i) => {
-                const timeStr = new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const timeStr = new Date(log.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
                 return (
-                <div key={log.id || i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-surface bg-primary text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                    <Droplets size={16} />
-                  </div>
-                  <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-4 rounded-xl">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-primary">{log.amount_ml}ml</span>
+                <div key={log.id || i} className="flex-none w-48 relative flex flex-col group">
+                  <div className="glass-panel p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-colors">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                          <Droplets size={12} />
+                        </div>
+                        <span className="font-bold text-primary">{log.amount_ml}ml</span>
+                      </div>
                       <time className="text-xs text-text-secondary font-medium">{timeStr}</time>
                     </div>
-                    <div className="text-sm text-text-secondary">Logged</div>
+                    <div className="text-xs text-text-secondary">Logged</div>
                   </div>
                 </div>
               )})}
               
               {currentIntake === 0 && (
-                <div className="text-center text-text-secondary text-sm py-4 italic z-10 relative bg-surface px-4">
+                <div className="text-center text-text-secondary text-sm py-4 italic w-full">
                   No water logged yet today.
                 </div>
               )}
@@ -449,7 +467,9 @@ const Dashboard = () => {
           </motion.div>
 
           {/* Gamification Section */}
-          <Gamification />
+          <div className="space-y-8">
+            <Gamification />
+          </div>
         </div>
       </div>
     </div>
@@ -457,3 +477,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

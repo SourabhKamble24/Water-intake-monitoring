@@ -14,7 +14,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated ? <>{children}</> : <Navigate to="/" />;
 };
 
-
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
 
