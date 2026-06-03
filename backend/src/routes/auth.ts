@@ -48,7 +48,9 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
           activity_level: activityLevel,
           daily_goal: dailyGoal,
           wake_time: wakeTime,
-          sleep_time: sleepTime
+          sleep_time: sleepTime,
+          points: 0,
+          level: 1
         }
       ])
       .select()
@@ -65,7 +67,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     
     jwt.sign(payload, secret, { expiresIn: '7d' }, (err, token) => {
       if (err) throw err;
-      res.json({ token, user: { id: user.id, name, email, dailyGoal } });
+      res.json({ token, user: { id: user.id, name, email, dailyGoal, points: user.points, level: user.level } });
     });
   } catch (error) {
     console.error((error as Error).message);
@@ -100,7 +102,17 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 
     jwt.sign(payload, secret, { expiresIn: '7d' }, (err, token) => {
       if (err) throw err;
-      res.json({ token, user: { id: user.id, name: user.name, email: user.email, dailyGoal: user.daily_goal } });
+      res.json({ 
+        token, 
+        user: { 
+          id: user.id, 
+          name: user.name, 
+          email: user.email, 
+          dailyGoal: user.daily_goal,
+          points: user.points,
+          level: user.level
+        } 
+      });
     });
   } catch (error) {
     console.error((error as Error).message);
@@ -111,7 +123,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 // @route PUT /api/auth/settings
 router.put('/settings', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { name, dailyGoal, weight, wakeTime, notifications } = req.body;
+    const { name, dailyGoal, weight, wakeTime, notifications, avatarUrl } = req.body;
 
     const { data: user, error } = await supabase
       .from('users')
@@ -120,10 +132,11 @@ router.put('/settings', authenticate, async (req: AuthRequest, res: Response): P
         daily_goal: dailyGoal,
         weight,
         wake_time: wakeTime,
-        notifications_enabled: notifications
+        notifications_enabled: notifications,
+        avatar_url: avatarUrl
       })
       .eq('id', req.userId)
-      .select('id, name, email, daily_goal, weight, wake_time, notifications_enabled')
+      .select('id, name, email, daily_goal, weight, wake_time, notifications_enabled, points, level, avatar_url')
       .single();
 
     if (error || !user) {
@@ -142,7 +155,10 @@ router.put('/settings', authenticate, async (req: AuthRequest, res: Response): P
         dailyGoal: user.daily_goal,
         weight: user.weight,
         wakeTime: user.wake_time,
-        notifications: user.notifications_enabled
+        notifications: user.notifications_enabled,
+        points: user.points,
+        level: user.level,
+        avatarUrl: user.avatar_url
       }
     });
   } catch (error) {

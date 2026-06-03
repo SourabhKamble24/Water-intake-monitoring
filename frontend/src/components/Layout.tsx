@@ -100,8 +100,12 @@ const Layout = () => {
           
           <div className="glass-panel p-3 flex items-center justify-between border-border/50 shadow-sm">
             <div className="flex items-center space-x-3 overflow-hidden">
-              <div className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-bold text-white shadow-md">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
+              <div className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-bold text-white shadow-md overflow-hidden border border-primary/20">
+                {(user as any)?.avatarUrl ? (
+                  <img src={(user as any).avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  user?.name?.charAt(0).toUpperCase() || 'U'
+                )}
               </div>
               <div className="truncate">
                 <p className="font-semibold text-sm truncate">{user?.name || 'User'}</p>

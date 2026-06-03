@@ -5,6 +5,9 @@ interface User {
   name: string;
   email: string;
   dailyGoal: number;
+  points: number;
+  level: number;
+  avatarUrl?: string;
 }
 
 interface AuthContextType {

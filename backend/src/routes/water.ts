@@ -32,6 +32,51 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response): Promise<
       return;
     }
     
+    // Gamification Logic
+    // 1. Calculate new points (1 point per 10 ml)
+    const pointsEarned = Math.floor(amountMl / 10);
+    
+    // Fetch current user data
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('points, level')
+      .eq('id', req.userId)
+      .single();
+
+    if (userError) {
+      console.error(userError);
+    }
+
+    let newPoints = (user?.points || 0) + pointsEarned;
+    
+    // 2. Calculate Level (Level 1: 0-1000, Level 2: 1001-2000, etc.)
+    let newLevel = Math.floor(newPoints / 1000) + 1;
+    let leveledUp = newLevel > (user?.level || 1);
+
+    // Update user
+    await supabase
+      .from('users')
+      .update({ points: newPoints, level: newLevel })
+      .eq('id', req.userId);
+
+    // 3. Achievements logic (simplified check for MVP: First Log)
+    let newAchievements = [];
+    const { data: existingAchievements } = await supabase
+      .from('achievements')
+      .select('title')
+      .eq('user_id', req.userId)
+      .eq('title', 'First Drop');
+
+    if (!existingAchievements || existingAchievements.length === 0) {
+      // Award "First Drop" badge
+      const { data: badge } = await supabase
+        .from('achievements')
+        .insert([{ user_id: req.userId, title: 'First Drop', description: 'Logged water for the first time!' }])
+        .select()
+        .single();
+      if (badge) newAchievements.push(badge);
+    }
+
     // get daily total
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
@@ -53,7 +98,15 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response): Promise<
 
     const currentIntake = logs.reduce((acc, log) => acc + Number(log.amount_ml), 0);
 
-    res.json({ newLog, currentIntake });
+    res.json({ 
+      newLog, 
+      currentIntake, 
+      pointsEarned, 
+      newPoints, 
+      newLevel, 
+      leveledUp,
+      newAchievements
+    });
   } catch (err) {
     console.error((err as Error).message);
     res.status(500).send('Server Error');
@@ -230,7 +283,8 @@ router.get('/analytics', authenticate, async (req: AuthRequest, res: Response): 
       kpis: {
         averageDaily,
         goalCompletion,
-        bestStreak
+        bestStreak,
+        currentStreak
       }
     });
 
@@ -256,6 +310,28 @@ router.get('/export', authenticate, async (req: AuthRequest, res: Response): Pro
       return;
     }
     res.json(logs);
+  } catch (err) {
+    console.error((err as Error).message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route GET /api/water/achievements
+// @desc Get user achievements
+router.get('/achievements', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { data: achievements, error } = await supabase
+      .from('achievements')
+      .select('*')
+      .eq('user_id', req.userId)
+      .order('date_earned', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching achievements' });
+      return;
+    }
+    res.json(achievements);
   } catch (err) {
     console.error((err as Error).message);
     res.status(500).send('Server Error');

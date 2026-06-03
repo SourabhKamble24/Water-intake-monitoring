@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Bell, Target, Moon, Droplet, Shield, Cloud, Loader2, Download, Sun } from 'lucide-react';
+import { User, Bell, Target, Moon, Droplet, Shield, Cloud, Loader2, Download, Sun, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
@@ -17,7 +17,8 @@ const Settings = () => {
     dailyGoal: user?.dailyGoal || 2500,
     weight: user?.weight || 70, // Assume 70 if not loaded, backend will return real
     wakeTime: user?.wakeTime || '07:00',
-    notifications: user?.notifications || false
+    notifications: user?.notifications || false,
+    avatarUrl: (user as any)?.avatarUrl || ''
   });
 
   useEffect(() => {
@@ -30,7 +31,8 @@ const Settings = () => {
         dailyGoal: user.dailyGoal,
         weight: (user as any).weight || prev.weight,
         wakeTime: (user as any).wakeTime || prev.wakeTime,
-        notifications: (user as any).notifications || prev.notifications
+        notifications: (user as any).notifications || prev.notifications,
+        avatarUrl: (user as any).avatarUrl || prev.avatarUrl
       }));
     }
   }, [user]);
@@ -63,7 +65,8 @@ const Settings = () => {
           dailyGoal: Number(formData.dailyGoal),
           weight: Number(formData.weight),
           wakeTime: formData.wakeTime,
-          notifications: formData.notifications
+          notifications: formData.notifications,
+          avatarUrl: (formData as any).avatarUrl
         }, 
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -130,6 +133,7 @@ const Settings = () => {
     { id: 'profile', label: 'Profile Information', icon: <User size={18} /> },
     { id: 'goals', label: 'Hydration Goals', icon: <Target size={18} /> },
     { id: 'preferences', label: 'Preferences', icon: <Bell size={18} /> },
+    { id: 'integrations', label: 'Integrations', icon: <Activity size={18} /> },
     { id: 'data', label: 'Data Export', icon: <Cloud size={18} /> },
   ];
 
@@ -195,12 +199,38 @@ const Settings = () => {
                   <h2 className="text-xl font-bold mb-6 pb-4 border-b border-border/50">Profile Information</h2>
                   
                   <div className="flex items-center space-x-6 mb-8">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-light to-primary flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                      {formData.name.charAt(0).toUpperCase() || 'U'}
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-light to-primary flex items-center justify-center text-white text-3xl font-bold shadow-lg overflow-hidden border-2 border-primary/20">
+                      {(formData as any).avatarUrl ? (
+                        <img src={(formData as any).avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        formData.name.charAt(0).toUpperCase() || 'U'
+                      )}
                     </div>
                     <div>
-                      <button type="button" className="btn-secondary py-2 px-4 text-sm mb-2">Change Avatar</button>
-                      <p className="text-xs text-text-secondary">JPG, GIF or PNG. Max size of 800K</p>
+                      <input 
+                        type="file" 
+                        id="avatar-upload" 
+                        accept="image/jpeg, image/png, image/gif" 
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (file.size > 800 * 1024) {
+                              setMessage({ text: 'Image must be less than 800KB', type: 'error' });
+                              return;
+                            }
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setFormData({ ...formData, avatarUrl: reader.result as string } as any);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <label htmlFor="avatar-upload" className="btn-secondary py-2 px-4 text-sm mb-2 inline-block cursor-pointer">
+                        Change Avatar
+                      </label>
+                      <p className="text-xs text-text-secondary mt-1">JPG, GIF or PNG. Max size of 800K</p>
                     </div>
                   </div>
 
@@ -347,6 +377,40 @@ const Settings = () => {
                 </motion.div>
               )}
 
+              {activeTab === 'integrations' && (
+                <motion.div
+                  key="integrations"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="glass-panel p-8"
+                >
+                  <h2 className="text-xl font-bold mb-6 pb-4 border-b border-border/50">Connected Apps</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-surface hover:bg-surface-hover rounded-xl border border-border transition-colors">
+                      <div className="flex items-center space-x-4">
+                        <div className="bg-green-500/10 p-3 rounded-xl text-green-500">
+                          <Activity size={20} />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-text-primary">Google Fit / Apple Health</h3>
+                          <p className="text-sm text-text-secondary">Sync your daily workouts to automatically adjust hydration goals.</p>
+                        </div>
+                      </div>
+                      <button 
+                        type="button" 
+                        className="btn-secondary py-2 px-4 text-sm border-green-500/30 text-green-500 hover:bg-green-500/10"
+                        onClick={() => alert("Please manage integrations directly from the Dashboard.")}
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {activeTab === 'data' && (
                 <motion.div
                   key="data"
@@ -378,7 +442,7 @@ const Settings = () => {
               )}
             </AnimatePresence>
 
-            {activeTab !== 'data' && (
+            {activeTab !== 'data' && activeTab !== 'integrations' && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
