@@ -1,12 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Droplets, Activity, Target, Bell, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { cn } from '../lib/utils';
-
+import { Droplets, Activity, Target, Bell, ArrowRight } from 'lucide-react';
 const Landing = () => {
-  return (
-    <div className="min-h-screen bg-background text-text-primary overflow-x-hidden font-sans">
+  return <div className="min-h-screen bg-background text-text-primary overflow-x-hidden font-sans">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-panel !rounded-none !border-x-0 !border-t-0 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -39,11 +36,15 @@ const Landing = () => {
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.6
+        }}>
             <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary font-semibold text-sm mb-6 border border-primary/20">
               The #1 Smart Hydration App
             </span>
@@ -72,24 +73,33 @@ const Landing = () => {
       {/* Statistics Section */}
       <section className="py-10 px-6 border-y border-border/50 bg-surface/30">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { label: 'Active Users', value: '50k+' },
-            { label: 'Water Logged', value: '10M+ L' },
-            { label: 'Goal Completion', value: '92%' },
-            { label: 'App Rating', value: '4.9/5' },
-          ].map((stat, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="text-center"
-            >
+          {[{
+          label: 'Active Users',
+          value: '50k+'
+        }, {
+          label: 'Water Logged',
+          value: '10M+ L'
+        }, {
+          label: 'Goal Completion',
+          value: '92%'
+        }, {
+          label: 'App Rating',
+          value: '4.9/5'
+        }].map((stat, i) => <motion.div key={i} initial={{
+          opacity: 0,
+          y: 20
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          delay: i * 0.1,
+          duration: 0.5
+        }} className="text-center">
               <div className="text-3xl md:text-4xl font-bold text-primary mb-2">{stat.value}</div>
               <div className="text-sm font-medium text-text-secondary uppercase tracking-wider">{stat.label}</div>
-            </motion.div>
-          ))}
+            </motion.div>)}
         </div>
       </section>
 
@@ -102,35 +112,27 @@ const Landing = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Target className="text-primary" size={32} />,
-                title: "Personalized Goals",
-                description: "AI calculates your ideal intake based on weight, weather, and activity levels."
-              },
-              {
-                icon: <Activity className="text-secondary" size={32} />,
-                title: "Beautiful Analytics",
-                description: "Visualize your progress with stunning, interactive charts and weekly insights."
-              },
-              {
-                icon: <Bell className="text-success" size={32} />,
-                title: "Smart Reminders",
-                description: "Never forget a glass. Receive gentle nudges at the perfect times throughout the day."
-              }
-            ].map((feature, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -5 }}
-                className="glass-panel p-8 group"
-              >
+            {[{
+            icon: <Target className="text-primary" size={32} />,
+            title: "Personalized Goals",
+            description: "AI calculates your ideal intake based on weight, weather, and activity levels."
+          }, {
+            icon: <Activity className="text-secondary" size={32} />,
+            title: "Beautiful Analytics",
+            description: "Visualize your progress with stunning, interactive charts and weekly insights."
+          }, {
+            icon: <Bell className="text-success" size={32} />,
+            title: "Smart Reminders",
+            description: "Never forget a glass. Receive gentle nudges at the perfect times throughout the day."
+          }].map((feature, i) => <motion.div key={i} whileHover={{
+            y: -5
+          }} className="glass-panel p-8 group">
                 <div className="bg-surface border border-border p-4 rounded-2xl inline-block mb-6 shadow-sm group-hover:shadow-md transition-all">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
                 <p className="text-text-secondary leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
+              </motion.div>)}
           </div>
         </div>
       </section>
@@ -141,16 +143,21 @@ const Landing = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-16">Loved by thousands</h2>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { name: "Sarah J.", role: "Athlete", text: "HydroTrack completely changed my hydration habits. The smart reminders are a game changer." },
-              { name: "Michael T.", role: "Software Engineer", text: "Finally, a hydration app that looks like it belongs in 2026. The UI is absolutely gorgeous." },
-              { name: "Elena R.", role: "Fitness Coach", text: "I recommend this to all my clients. The analytics are incredibly motivating!" }
-            ].map((testimonial, i) => (
-              <div key={i} className="glass-panel p-8 text-left relative">
+            {[{
+            name: "Sarah J.",
+            role: "Athlete",
+            text: "HydroTrack completely changed my hydration habits. The smart reminders are a game changer."
+          }, {
+            name: "Michael T.",
+            role: "Software Engineer",
+            text: "Finally, a hydration app that looks like it belongs in 2026. The UI is absolutely gorgeous."
+          }, {
+            name: "Elena R.",
+            role: "Fitness Coach",
+            text: "I recommend this to all my clients. The analytics are incredibly motivating!"
+          }].map((testimonial, i) => <div key={i} className="glass-panel p-8 text-left relative">
                 <div className="text-primary mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <span key={j} className="inline-block">★</span>
-                  ))}
+                  {[...Array(5)].map((_, j) => <span key={j} className="inline-block">★</span>)}
                 </div>
                 <p className="text-lg mb-6 italic">"{testimonial.text}"</p>
                 <div className="flex items-center space-x-3">
@@ -162,8 +169,7 @@ const Landing = () => {
                     <div className="text-sm text-text-secondary">{testimonial.role}</div>
                   </div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -201,8 +207,6 @@ const Landing = () => {
           © {new Date().getFullYear()} HydroTrack Inc. All rights reserved.
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;

@@ -1,0 +1,21 @@
+{
+  "name": "water-intake-monitoring-and-hydration-reminder-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SourabhKamble24/Water-intake-monitoring.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SourabhKamble24/Water-intake-monitoring/issues"
+  },
+  "homepage": "https://github.com/SourabhKamble24/Water-intake-monitoring#readme"
+}

@@ -13,6 +13,8 @@ CREATE TABLE users (
     daily_goal NUMERIC NOT NULL, -- in ml
     wake_time TEXT NOT NULL,
     sleep_time TEXT NOT NULL,
+    reset_token TEXT,
+    reset_token_expires_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

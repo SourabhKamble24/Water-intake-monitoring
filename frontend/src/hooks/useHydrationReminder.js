@@ -1,20 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-
 export const useHydrationReminder = () => {
-  const { user } = useAuth();
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
+  const {
+    user
+  } = useAuth();
+  const intervalRef = useRef(null);
   useEffect(() => {
     // Check if notifications are enabled in user settings
-    const notificationsEnabled = (user as any)?.notifications;
-
+    const notificationsEnabled = user?.notifications;
     if (notificationsEnabled) {
       // Request permission from the browser if not already granted
       if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
         Notification.requestPermission();
       }
-
       if (Notification.permission === 'granted') {
         // Set an interval to show a notification every 1 hour (3600000 ms)
         // For testing, you could change this to something smaller like 10000 (10 seconds)
