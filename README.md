@@ -38,8 +38,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/hydrotrack.git
-   cd hydrotrack
+   git clone https://github.com/SourabhKamble24/Water-intake-monitoring.git
+   cd Water-intake-monitoring
    ```
 
 2. **Setup Backend**
