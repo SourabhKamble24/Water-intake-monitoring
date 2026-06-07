@@ -6,7 +6,6 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
-import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -24,7 +23,7 @@ function AppRoutes() {
     isAuthenticated
   } = useAuth();
   return <Routes>
-      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Landing />} />
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />} />
       <Route path="/forgot-password" element={isAuthenticated ? <Navigate to="/dashboard" /> : <ForgotPassword />} />

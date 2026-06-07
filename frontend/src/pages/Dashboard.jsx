@@ -43,6 +43,9 @@ const Dashboard = () => {
   const [customAmount, setCustomAmount] = useState('');
   const [todayLogs, setTodayLogs] = useState([]);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [averageDaily, setAverageDaily] = useState(0);
+  const [daysGoalReached30Days, setDaysGoalReached30Days] = useState(0);
+  const [monthlyProgressPercent, setMonthlyProgressPercent] = useState(0);
 
   // Activity Integration state (Simulated for MVP)
   const [isActivityConnected, setIsActivityConnected] = useState(false);
@@ -80,6 +83,9 @@ const Dashboard = () => {
       setCurrentIntake(todayRes.data.currentIntake);
       setTodayLogs(todayRes.data.logs);
       setCurrentStreak(analyticsRes.data.kpis.currentStreak || 0);
+      setAverageDaily(analyticsRes.data.kpis.averageDaily || 0);
+      setDaysGoalReached30Days(analyticsRes.data.kpis.daysGoalReached30Days || 0);
+      setMonthlyProgressPercent(analyticsRes.data.kpis.monthlyProgressPercent || 0);
     } catch (error) {
       console.error('Error fetching dashboard data', error);
     } finally {
@@ -293,8 +299,8 @@ const Dashboard = () => {
   }, 
     /*#__PURE__*/React.createElement(KPICard, { title: "Goal Remaining", value: Math.max((adjustedGoal - currentIntake) / 1000, 0).toFixed(1) + " Litre", subtext: Math.round(100 - percentage) + "% Left", icon: Target, colorClass: "text-blue-400" }),
     /*#__PURE__*/React.createElement(KPICard, { title: "Current Streak", value: currentStreak + " Days", subtext: "Keep it up!", icon: Flame, colorClass: "text-orange-400" }),
-    /*#__PURE__*/React.createElement(KPICard, { title: "Daily Average", value: "2.3 Litres", subtext: "This Week", icon: Activity, colorClass: "text-green-400" }),
-    /*#__PURE__*/React.createElement(KPICard, { title: "Monthly Progress", value: "65%", subtext: "19 of 30 Days", icon: PieChart, colorClass: "text-purple-400" })
+    /*#__PURE__*/React.createElement(KPICard, { title: "Daily Average", value: (averageDaily / 1000).toFixed(1) + " Litres", subtext: "Last 30 Days", icon: Activity, colorClass: "text-green-400" }),
+    /*#__PURE__*/React.createElement(KPICard, { title: "Monthly Progress", value: monthlyProgressPercent + "%", subtext: daysGoalReached30Days + " of 30 Days", icon: PieChart, colorClass: "text-purple-400" })
   ),
   
   /*#__PURE__*/React.createElement("div", {

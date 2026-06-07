@@ -226,14 +226,19 @@ router.get('/analytics', authenticate, async (req, res) => {
       }
     });
 
-    // Average Daily (Last 30 days)
+    // Average Daily (Last 30 days) & Goal Reached Days
+    let daysGoalReached30Days = 0;
     // We only count days they actually logged something to avoid dividing by 30 if they just started
     logsByDay.forEach((amount, date) => {
       if (new Date(date) >= thirtyDaysAgo) {
         daysWithLogs30Days++;
+        if (amount >= dailyGoal) {
+          daysGoalReached30Days++;
+        }
       }
     });
     const averageDaily = daysWithLogs30Days > 0 ? Math.round(totalAmount30Days / daysWithLogs30Days) : 0;
+    const monthlyProgressPercent = Math.round((daysGoalReached30Days / 30) * 100);
 
     // Goal Completion % (Last 7 days average)
     let totalWeeklyGoal = 7 * dailyGoal;
@@ -275,7 +280,9 @@ router.get('/analytics', authenticate, async (req, res) => {
         averageDaily,
         goalCompletion,
         bestStreak,
-        currentStreak
+        currentStreak,
+        daysGoalReached30Days,
+        monthlyProgressPercent
       }
     });
   } catch (err) {
