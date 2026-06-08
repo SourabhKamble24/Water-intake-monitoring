@@ -1,5 +1,7 @@
 # 💧 HydroTrack: Advanced Water Intake Monitoring & Hydration Reminder System
 
+**🚀 Live Demo:** [https://water-intake-monitoring-j8czty973-sourabhkamble24s-projects.vercel.app](https://water-intake-monitoring-j8czty973-sourabhkamble24s-projects.vercel.app)
+
 A full-stack, modern web application designed to help users track their daily water intake, stay hydrated, and build healthy habits through smart reminders and gamification.
 
 ## ✨ Features
