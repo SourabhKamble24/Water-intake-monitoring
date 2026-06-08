@@ -70,7 +70,7 @@ const Register = () => {
         age: Number(formData.age),
         weight: Number(formData.weight)
       };
-      const res = await axios.post('http://localhost:5000/api/auth/register', payload);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/register`, payload);
       login(res.data.token, res.data.user);
       navigate('/dashboard');
     } catch (err) {

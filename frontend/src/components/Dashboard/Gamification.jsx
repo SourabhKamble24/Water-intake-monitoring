@@ -12,7 +12,7 @@ const Gamification = () => {
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/water/achievements', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/water/achievements`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

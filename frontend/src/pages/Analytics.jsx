@@ -22,12 +22,12 @@ const Analytics = () => {
   const fetchAnalytics = async () => {
     try {
       const [analyticsRes, todayRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/water/analytics', {
+        axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/water/analytics`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         }),
-        axios.get('http://localhost:5000/api/water/today', {
+        axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/water/today`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

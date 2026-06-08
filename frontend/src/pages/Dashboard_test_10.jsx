@@ -68,11 +68,11 @@ const Dashboard = () => {
   const adjustedGoal = user?.dailyGoal ? user.dailyGoal + weatherGoalIncrease + activityGoalIncrease : 2500;
   const fetchDashboardData = async () => {
     try {
-      const [todayRes, analyticsRes] = await Promise.all([axios.get('http://localhost:5000/api/water/today', {
+      const [todayRes, analyticsRes] = await Promise.all([axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/water/today`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      }), axios.get('http://localhost:5000/api/water/analytics', {
+      }), axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/water/analytics`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -137,7 +137,7 @@ const Dashboard = () => {
     if (amount <= 0) return;
     setAddLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/water', {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/water`, {
         amountMl: amount
       }, {
         headers: {

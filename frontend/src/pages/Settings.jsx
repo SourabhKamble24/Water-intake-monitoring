@@ -68,7 +68,7 @@ const Settings = () => {
       type: ''
     });
     try {
-      const res = await axios.put('http://localhost:5000/api/auth/settings', {
+      const res = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/settings`, {
         name: formData.name,
         dailyGoal: Number(formData.dailyGoal),
         weight: Number(formData.weight),
@@ -114,7 +114,7 @@ const Settings = () => {
   };
   const handleExportData = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/water/export', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/water/export`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
